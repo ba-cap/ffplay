@@ -1,13 +1,5 @@
 #!/bin/bash
 
-
-#
-# first you must download the ffmpeg source
-# ffmpeg4.2.1 https://ffmpeg.org/releases/ffmpeg-4.2.1.tar.bz2
-# tar jxvf ffmpeg-4.2.1.tar.bz2
-# cd ffmpeg-4.2.1.tar.bz2
-# ln -s ../BuildFfmpegForAndroid.sh
-
    CURRENT_DIR=`pwd`
 BUILD_DEST_DIR=$CURRENT_DIR/android_out
 
@@ -53,7 +45,7 @@ for DIR in arm arm64; do
         $NDK_DIR/build/tools/make-standalone-toolchain.sh \
             --arch=$arch \
             --install-dir=$target_dir \
-            --platform=android-22 \
+            --platform=android-23 \
             --use-llvm \
             --force
          echo
@@ -63,8 +55,14 @@ done
 
 #########################################################################
 LIBTYPE=shared
-# CFLAGS="-fPIC -DANDROID"
- CFLAGS="-O2 -fPIC -DANDROID -Wfatal-errors -Wno-deprecated -mfpu=neon -mfloat-abi=softfp "
+
+#
+# -Wall      代开所有警告
+# -Werror    将所有的警告当成错误进行处理
+#
+#CFLAGS="-O2 -fPIC -DANDROID -Wall -Werror -Wno-unused -Wfatal-errors -Wno-deprecated -Wunused-command-line-argument"
+#CFLAGS="-DANDROID -O2 -fPIC -Wall -Wextra -Werror -Wfatal-errors"
+ CFLAGS="-DANDROID -O2 -fPIC -Wall -Wextra"
 
 
 # get the build library type
@@ -199,7 +197,7 @@ function ff_config_custom2() {
     echo $ffconfig
 }
 
-function ff_config_custom() {
+function ff_config_custom3() {
   ffconfig="--enable-network \
             --enable-jni \
             --enable-mediacodec \
@@ -209,6 +207,23 @@ function ff_config_custom() {
             --enable-asm \
             --enable-neon \
             --enable-small"
+
+    echo $ffconfig
+}
+
+function ff_config_custom() {
+  ffconfig="--enable-jni \
+            --enable-mediacodec \
+            --enable-decoder=h264_mediacodec \
+            --enable-hwaccel=h264_mediacodec \
+            --enable-runtime-cpudetect \
+            --enable-asm \
+            --enable-neon \
+            --enable-small \
+            --disable-postproc \
+            --disable-avdevice \
+            --disable-symver \
+            --disable-stripping"
 
     echo $ffconfig
 }
@@ -223,7 +238,7 @@ function ffmpeg_build() {
     BUILD_OUT=$BUILD_DEST_DIR/$ABI
         MY_CC=
         MY_NM=
-     MY_CFLAG="$CFLAGS"
+     MY_CFLAG=
       SYSROOT=
 
     if [ "$ABI" = "armeabi-v7a" ]; then
@@ -233,6 +248,8 @@ function ffmpeg_build() {
             MY_CC=$ndk_bundle_dir_arm/bin/arm-linux-androideabi-clang
             MY_NM=$ndk_bundle_dir_arm/bin/arm-linux-androideabi-nm
           SYSROOT=$ndk_bundle_dir_arm/sysroot
+        #MY_CFLAG="-I$SYSROOT/usr/include $CFLAGS -mfpu=neon -mfloat-abi=softfp "
+         MY_CFLAG="$CFLAGS -mfpu=neon -mfloat-abi=softfp "
     else
           MY_ARCH=arm64
               CPU=armv8-a
@@ -240,6 +257,8 @@ function ffmpeg_build() {
             MY_CC=$ndk_bundle_dir_arm64/bin/aarch64-linux-android-clang
             MY_NM=$ndk_bundle_dir_arm64/bin/aarch64-linux-android-nm
           SYSROOT=$ndk_bundle_dir_arm64/sysroot
+        #MY_CFLAG="-I$SYSROOT/usr/include $CFLAGS "
+         MY_CFLAG="$CFLAGS "
     fi
 
     # make the out directory
@@ -263,42 +282,41 @@ function ffmpeg_build() {
 
     ## --disable-all replace --enable-small
 
-    base_ffmpeg_config="--target-os=android \
-                        --prefix=$BUILD_OUT \
-                        --arch=$MY_ARCH \
-                        --cpu=$CPU \
-                        --cross-prefix=$CROSS_PRE \
-                        --extra-cflags="$MY_CFLAG" \
-                        --sysroot=$SYSROOT \
-                        --enable-cross-compile \
-                        --disable-doc \
-                        --disable-htmlpages \
-                        --disable-manpages \
-                        --disable-podpages \
-                        --disable-txtpages \
-                        --disable-programs \
-                        --disable-ffmpeg \
-                        --disable-ffplay \
-                        --disable-ffprobe \
-                        --disable-symver \
-                        --disable-stripping \
-                        $(getLibraryType) \
-                        $(ff_config_custom) \
-                        --enable-gpl"
-    #echo $base_ffmpeg_config
-    $CURRENT_DIR/configure $base_ffmpeg_config
+    $CURRENT_DIR/configure \
+        --target-os=android \
+        --prefix=$BUILD_OUT \
+        --arch=$MY_ARCH \
+        --cpu=$CPU \
+        --cross-prefix=$CROSS_PRE \
+        --extra-cflags="$MY_CFLAG" \
+        --sysroot=$SYSROOT \
+        --enable-cross-compile \
+        --disable-doc \
+        --disable-htmlpages \
+        --disable-manpages \
+        --disable-podpages \
+        --disable-txtpages \
+        --disable-programs \
+        --disable-ffmpeg \
+        --disable-ffplay \
+        --disable-ffprobe \
+        $(getLibraryType) \
+        $(ff_config_custom) \
+        --enable-gpl
 
     make clean
-    make j4
+    make -j4
     make install
 }
 
 
-#ABI_LIST="armeabi-v7a arm64-v8a"
-ABI_LIST="arm64-v8a"
+#ABI_LIST="arm64-v8a arm64-v8a" 
+ABI_LIST="armeabi-v7a"
 
 for abi in $ABI_LIST; do
 
     ffmpeg_build $abi
+
+    sleep 6
 
 done

@@ -1,4 +1,3 @@
-[TOC]
 
 # How to build ffmepg for android
 
@@ -7,9 +6,11 @@
 ```
 mkdir -p ffmpeg
 cd ffmpeg
+# wget -c http://ffmpeg.org/releases/ffmpeg-3.4.6.tar.xz
 wget -c https://ffmpeg.org/releases/ffmpeg-4.2.1.tar.bz2
 tar jxvf ffmpeg-4.2.1.tar.bz2
-cd ffmpeg-4.2.1
+# tar Jxvf ffmpeg-3.4.6.tar.xz
+cd ffmpeg-3.4.6
 
 // copy the BuildFfmpegForAndroid.sh into ffmpeg-4.2.1
 ```
