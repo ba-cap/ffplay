@@ -5,12 +5,13 @@ cmake_minimum_required(VERSION 3.4.1)
 ## include directory
 include_directories(
         include/ffmpeg
+        nativehelper
 )
 
 ## shared library directory
 set(LIBS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/${ANDROID_ABI})
 
-message(WARNING "library directory ${LIBS_DIR} ")
+## message(WARNING "library directory ${LIBS_DIR} ")
 
 
 ####################################################################################################
@@ -51,7 +52,30 @@ set_target_properties(swscale PROPERTIES IMPORTED_LOCATION ${LIBS_DIR}/libswscal
 
 
 ####################################################################################################
-# local JNI NDK
+# local JNI NDK nativehelper
+####################################################################################################
+add_library(
+        nativehelper
+
+        SHARED
+
+        nativehelper/ALogger.h
+        nativehelper/JniConstants.cpp
+        nativehelper/JniConstants.h
+        nativehelper/JNIHelp.cpp
+        nativehelper/JNIHelp.h
+        nativehelper/ScopedLocalRef.h
+        nativehelper/ScopedStringChars.h
+)
+
+target_link_libraries(
+        nativehelper
+        log
+)
+
+
+####################################################################################################
+# local JNI NDK ffplay1.0
 ####################################################################################################
 
 add_library(
@@ -71,6 +95,9 @@ target_link_libraries(
 
         # android
         log android
+
+        #
+        nativehelper
 )
 
 
