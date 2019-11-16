@@ -22,3 +22,9 @@ cd ffmpeg-3.4.6
 + copy the build shared file and c head file to project directory
 
 
+## how to run
+
+1. copy the directory 'sources/ffmpeg-test' to your phone disk.
+2. modify the code of 'dai_android_media_ffplay_MainActivity.cpp' which source to use.
+
+
