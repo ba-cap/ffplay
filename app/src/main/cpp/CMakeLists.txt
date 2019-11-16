@@ -66,6 +66,8 @@ add_library(
         nativehelper/JNIHelp.h
         nativehelper/ScopedLocalRef.h
         nativehelper/ScopedStringChars.h
+        nativehelper/toStringArray.h
+        nativehelper/UniquePtr.h
 )
 
 target_link_libraries(

@@ -17,19 +17,19 @@
 #endif
 
 #ifndef ALOGD
-#   define ALOGD(...) ((void)ALOG(LOG_DEBUG, tag, fmt))
+#   define ALOGD(tag, fmt...) ((void)ALOG(LOG_DEBUG, tag, fmt))
 #endif
 
 #ifndef ALOGI
-#   define ALOGI(...) ((void)ALOG(LOG_INFO, tag, fmt))
+#   define ALOGI(tag, fmt...) ((void)ALOG(LOG_INFO, tag, fmt))
 #endif
 
 #ifndef ALOGW
-#   define ALOGW(...) ((void)ALOG(LOG_WARN, tag, fmt))
+#   define ALOGW(tag, fmt...) ((void)ALOG(LOG_WARN, tag, fmt))
 #endif
 
 #ifndef ALOGE
-#   define ALOGE(...) ((void)ALOG(LOG_ERROR, tag, fmt))
+#   define ALOGE(tag, fmt...) ((void)ALOG(LOG_ERROR, tag, fmt))
 #endif
 
 

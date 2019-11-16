@@ -10,6 +10,8 @@
 #include "ALogger.h"
 #include "JniConstants.h"
 
+static const char *tag = "JNIHelp";
+
 namespace {
 
 // java.io.FileDescriptor.descriptor.
@@ -35,9 +37,9 @@ jfieldID FindField(JNIEnv *env, jclass klass, const char *name, const char *desc
 jmethodID FindMethod(JNIEnv *env, jclass klass, const char *name, const char *signature)
 {
     jmethodID result = env->GetMethodID(klass, name, signature);
-    if (result == NULL)
+    if (result == nullptr)
     {
-        ALOGV("failed to find method '%s%s'", name, signature);
+        ALOGV(tag, "failed to find method '%s%s'", name, signature);
         abort();
     }
     return result;
@@ -102,10 +104,10 @@ jniRegisterNativeMethods(C_JNIEnv *env,
 {
     JNIEnv *e = reinterpret_cast<JNIEnv *>(env);
 
-    ALOGV("Registering %s's %d native methods...", className, numMethods);
+    ALOGV(tag, "Registering %s's %d native methods...", className, numMethods);
 
     scoped_local_ref<jclass> c(env, findClass(env, className));
-    if (c.get() == NULL)
+    if (c.get() == nullptr)
     {
         char *tmp;
         const char *msg;
@@ -123,7 +125,7 @@ jniRegisterNativeMethods(C_JNIEnv *env,
 
     if ((*env)->RegisterNatives(e, c.get(), gMethods, numMethods) < 0)
     {
-        char *tmp;
+        char       *tmp;
         const char *msg;
         if (asprintf(&tmp, "RegisterNatives failed for '%s'; aborting...", className) == -1)
         {
@@ -155,7 +157,7 @@ static bool getExceptionSummary(C_JNIEnv *env, jthrowable exception, std::string
     scoped_local_ref<jclass> classClass    (env, (*env)->GetObjectClass(e, exceptionClass.get())); // java.lang.Class, can't fail
     jmethodID classGetNameMethod = (*env)->GetMethodID(e, classClass.get(), "getName", "()Ljava/lang/String;");
     scoped_local_ref<jstring> classNameStr(env, (jstring) (*env)->CallObjectMethod(e, exceptionClass.get(), classGetNameMethod));
-    if (classNameStr.get() == NULL)
+    if (classNameStr.get() == nullptr)
     {
         (*env)->ExceptionClear(e);
         result = "<error getting class name>";
@@ -274,21 +276,21 @@ extern "C" int jniThrowException(C_JNIEnv *env, const char *className, const cha
         {
             std::string text;
             getExceptionSummary(env, exception.get(), text);
-            ALOGW("Discarding pending exception (%s) to throw %s", text.c_str(), className);
+            ALOGW(tag, "Discarding pending exception (%s) to throw %s", text.c_str(), className);
         }
     }
 
     scoped_local_ref<jclass> exceptionClass(env, findClass(env, className));
     if (exceptionClass.get() == NULL)
     {
-        ALOGE("Unable to find exception class %s", className);
+        ALOGE(tag, "Unable to find exception class %s", className);
         /* ClassNotFoundException now pending */
         return -1;
     }
 
     if ((*env)->ThrowNew(e, exceptionClass.get(), msg) != JNI_OK)
     {
-        ALOGE("Failed throwing '%s' '%s'", className, msg);
+        ALOGE(tag, "Failed throwing '%s' '%s'", className, msg);
         /* an exception, most likely OOM, will now be pending */
         return -1;
     }

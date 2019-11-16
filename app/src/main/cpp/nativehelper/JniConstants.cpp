@@ -7,6 +7,9 @@
 #include <atomic>
 #include <mutex>
 
+
+static const char *tag = "JniConstants";
+
 static std::atomic<bool> g_constants_initialized(false);
 static std::mutex g_constants_mutex;
 
@@ -55,7 +58,7 @@ static jclass findClass(JNIEnv *env, const char *name)
     jclass result = reinterpret_cast<jclass>(env->NewGlobalRef(localClass.get()));
     if (result == NULL)
     {
-        ALOGE("failed to find class '%s'", name);
+        ALOGE(tag, "failed to find class '%s'", name);
         abort();
     }
     return result;
