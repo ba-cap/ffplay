@@ -92,6 +92,28 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
     audioStream = av_find_best_stream(ic, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
     ALOGD(tag, "find best audio stream: %d", audioStream);
 
+    // read the frame stream
+    AVPacket *pkt = av_packet_alloc();
+    for( ; ; )
+    {
+        int ret = av_read_frame(ic, pkt);
+        if (ret != 0)
+        {
+            ALOGW(tag, "read the end of file");
+            // seek to position 5s
+            int pos = 5 * r2d(ic->streams[videoStream]->time_base);
+            av_seek_frame(ic, videoStream, pos, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
+            continue;
+        }
+
+        ALOGD(tag, "stream:%d size:%d pts:%lld flag:%d", pkt->stream_index, pkt->size, pkt->pts, pkt->flags);
+
+        // free the memory
+        av_packet_unref(pkt);
+    }
+
+
+
 
 
     // close the AVFormatContext
