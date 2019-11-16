@@ -73,12 +73,24 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
         {
             audioStream = i;
             ALOGD(tag, "this is audio");
-            ALOGD(tag, "sample_rate   = %d", stream->codecpar->sample_rate);
-            ALOGD(tag, "channel_layout= %d", stream->codecpar->channel_layout);
-            ALOGD(tag, "channels      = %d", stream->codecpar->channels);
-            ALOGD(tag, "sample_format = %d", stream->codecpar->format);
+            ALOGD(tag, "sample_rate   = %d",   stream->codecpar->sample_rate);
+            ALOGD(tag, "channel_layout= %lld", stream->codecpar->channel_layout);
+            ALOGD(tag, "channels      = %d",   stream->codecpar->channels);
+            ALOGD(tag, "sample_format = %d",   stream->codecpar->format);
         }
     }
+
+
+    // get audio stream info
+    // av_find_best_stream 相关参数说明:
+    //    AVFormatContext *ic,    // 上下文
+    //    enum AVMediaType type,  // 音频或者视频类型
+    //    int wanted_stream_nb,   // 用不到可以传递 -1
+    //    int related_stream,     // ffmpeg 有个节目的概念 ，一套视频中有多个节目, 目前该值用不到，使用 -1
+    //    AVCodec **decoder_ret,  // 最终的解码器，也用不到 null
+    //    int flags               // 官方说法还是没有用到，可能留给将来用, 默认可以填写 0
+    audioStream = av_find_best_stream(ic, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
+    ALOGD(tag, "find best audio stream: %d", audioStream);
 
 
 
