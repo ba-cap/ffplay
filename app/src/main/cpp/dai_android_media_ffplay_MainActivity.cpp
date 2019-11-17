@@ -130,7 +130,7 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
     if(nullptr != videoCoder)
     {
         videoDecoderCtx = avcodec_alloc_context3(videoCoder);
-        videoDecoderCtx->thread_count = 1;
+        videoDecoderCtx->thread_count = 4; // use 4 thread to decode
 
         avcodec_parameters_to_context(videoDecoderCtx, ic->streams[videoStream]->codecpar);
 
@@ -152,7 +152,7 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
     if (nullptr != audioCoder)
     {
         audioCodecCtx = avcodec_alloc_context3(audioCoder);
-        audioCodecCtx->thread_count = 1;
+        audioCodecCtx->thread_count = 4; // use 4 thread to decode
         avcodec_parameters_to_context(audioCodecCtx, ic->streams[audioStream]->codecpar);
 
         ret = avcodec_open2(audioCodecCtx, nullptr, nullptr);
