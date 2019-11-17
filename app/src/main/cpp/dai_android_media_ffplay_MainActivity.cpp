@@ -22,6 +22,16 @@ static double r2d(AVRational r)
     return (r.num == 0 || r.den == 0) ? 0.0 : (double)r.num / (double)r.den;
 }
 
+// 当前时间戳
+static long  long getCurrentMillisecond()
+{
+    struct timeval tv;
+    gettimeofday(&tv, nullptr);
+    int     sec = tv.tv_sec % 360000;
+    long long t = sec * 1000 + tv.tv_usec / 1000;
+    return t;
+}
+
 extern "C" JNIEXPORT jstring JNICALL
 Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject clazz)
 {
@@ -152,26 +162,73 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
         }
     }
 
-
-
-
-
-
     // read the frame stream
-    AVPacket *pkt = av_packet_alloc();
+    AVPacket *pkt   = av_packet_alloc();
+    AVFrame  *frame = av_frame_alloc();
+
+    long long startTime  = getCurrentMillisecond();
+    int       frameCount = 0;
+
     for( ; ; )
     {
+        // 超过 1s 统计一次
+        long long nowTime = getCurrentMillisecond();
+        if( nowTime - startTime >= 1000)
+        {
+            startTime = nowTime;
+            ALOGW(tag, "now decode fps is %d", frameCount);
+            frameCount = 0;
+        }
+
         int ret = av_read_frame(ic, pkt);
         if (ret != 0)
         {
             ALOGW(tag, "read the end of file");
-            // seek to position 5s
-            int pos = 5 * r2d(ic->streams[videoStream]->time_base);
-            av_seek_frame(ic, videoStream, pos, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
+
+            bool endFileExit = true;
+            if(endFileExit)
+            {
+                break;
+            }
+            else
+            {
+                // seek to position 5s
+                int pos = 5 * r2d(ic->streams[videoStream]->time_base);
+                av_seek_frame(ic, videoStream, pos, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
+                continue;
+            }
+        }
+
+        // ALOGD(tag, "stream:%d size:%d pts:%lld flag:%d", pkt->stream_index, pkt->size, pkt->pts, pkt->flags);
+
+        // not video
+        if(pkt->stream_index != videoStream)
+        {
             continue;
         }
 
-        ALOGD(tag, "stream:%d size:%d pts:%lld flag:%d", pkt->stream_index, pkt->size, pkt->pts, pkt->flags);
+        ret = avcodec_send_packet(videoDecoderCtx, pkt);
+        av_packet_unref(pkt);
+        if(ret != 0)
+        {
+            ALOGE(tag, "send packet failed, reason: %s.", av_err2str(ret));
+            continue;
+        }
+
+        for(; ;)
+        {
+            ret = avcodec_receive_frame(videoDecoderCtx, frame);
+            if(ret != 0)
+            {
+                // ALOGE(tag, "receive packet frame failed, reason: %s.", av_err2str(ret));
+                break;
+            }
+
+            // ALOGD(tag, "receive frame pts=%lld.", frame->pts);
+
+            frameCount++;
+        }
+
 
         //
 
