@@ -27,6 +27,9 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
 {
     std::string str(avcodec_configuration());
 
+    //av_register_all();
+    //avcodec_register_all();
+
     avformat_network_init();
 
     AVFormatContext *ic = nullptr;
@@ -92,6 +95,68 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
     audioStream = av_find_best_stream(ic, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
     ALOGD(tag, "find best audio stream: %d", audioStream);
 
+    bool useSoftDecoder = true;
+    // find the soft video decoder
+    //
+    AVCodec *videoCoder = avcodec_find_decoder(ic->streams[videoStream]->codecpar->codec_id);
+    if(useSoftDecoder)
+    {
+        if (nullptr == videoCoder)
+        {
+            ALOGE(tag, "can't found the soft video decoder");
+        }
+    }
+    else
+    {
+        videoCoder = avcodec_find_encoder_by_name("h264_mediacodec");
+        if(nullptr == videoCoder)
+        {
+            ALOGE(tag, "can't found the hard video decoder");
+        }
+    }
+
+    // init the video decoder
+    AVCodecContext *videoDecoderCtx = nullptr;
+    if(nullptr != videoCoder)
+    {
+        videoDecoderCtx = avcodec_alloc_context3(videoCoder);
+        videoDecoderCtx->thread_count = 1;
+
+        avcodec_parameters_to_context(videoDecoderCtx, ic->streams[videoStream]->codecpar);
+
+        ret = avcodec_open2(videoDecoderCtx, nullptr, nullptr);
+        if (ret != 0)
+        {
+            ALOGE(tag, "open video decoder failed, reason:%s.", av_err2str(ret));
+        }
+    }
+
+    // find and open audio decoder
+    AVCodec *audioCoder = avcodec_find_decoder(ic->streams[audioStream]->codecpar->codec_id);
+    if (nullptr == audioCoder)
+    {
+        ALOGE(tag, "can't found the soft audio decoder");
+    }
+
+    AVCodecContext *audioCodecCtx = nullptr;
+    if (nullptr != audioCoder)
+    {
+        audioCodecCtx = avcodec_alloc_context3(audioCoder);
+        audioCodecCtx->thread_count = 1;
+        avcodec_parameters_to_context(audioCodecCtx, ic->streams[audioStream]->codecpar);
+
+        ret = avcodec_open2(audioCodecCtx, nullptr, nullptr);
+        if (ret != 0)
+        {
+            ALOGE(tag, "open audio decoder failed, reason:%s.", av_err2str(ret));
+        }
+    }
+
+
+
+
+
+
     // read the frame stream
     AVPacket *pkt = av_packet_alloc();
     for( ; ; )
@@ -107,6 +172,8 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
         }
 
         ALOGD(tag, "stream:%d size:%d pts:%lld flag:%d", pkt->stream_index, pkt->size, pkt->pts, pkt->flags);
+
+        //
 
         // free the memory
         av_packet_unref(pkt);
