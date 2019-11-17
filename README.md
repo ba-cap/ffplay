@@ -27,4 +27,42 @@ cd ffmpeg-3.4.6
 1. copy the directory 'sources/ffmpeg-test' to your phone disk.
 2. modify the code of 'dai_android_media_ffplay_MainActivity.cpp' which source to use.
 
+## problem
+
++ not support --enable-hwaccel=h264_mediacodec
+
+  we can use follow command show all --enable-hwaccel
+  ```shell
+  ffmpeg-4.2.1$ ./configure --list-hwaccels
+
+  // command result:
+    h263_vaapi              hevc_d3d11va            mpeg1_nvdec             mpeg2_vdpau             vc1_dxva2               vp9_nvdec
+    h263_videotoolbox       hevc_d3d11va2           mpeg1_vdpau             mpeg2_videotoolbox      vc1_nvdec               vp9_vaapi
+    h264_d3d11va            hevc_dxva2              mpeg1_videotoolbox      mpeg2_xvmc              vc1_vaapi               wmv3_d3d11va
+    h264_d3d11va2           hevc_nvdec              mpeg1_xvmc              mpeg4_nvdec             vc1_vdpau               wmv3_d3d11va2
+    h264_dxva2              hevc_vaapi              mpeg2_d3d11va           mpeg4_vaapi             vp8_nvdec               wmv3_dxva2
+    h264_nvdec              hevc_vdpau              mpeg2_d3d11va2          mpeg4_vdpau             vp8_vaapi               wmv3_nvdec
+    h264_vaapi              hevc_videotoolbox       mpeg2_dxva2             mpeg4_videotoolbox      vp9_d3d11va             wmv3_vaapi
+    h264_vdpau              mjpeg_nvdec             mpeg2_nvdec             vc1_d3d11va             vp9_d3d11va2            wmv3_vdpau
+    h264_videotoolbox       mjpeg_vaapi             mpeg2_vaapi             vc1_d3d11va2            vp9_dxva2
+  ```
+
+  some address see: https://trac.ffmpeg.org/wiki/HWAccelIntro
+
++ support --enable-decoder=h264_mediacodec
+
+  use follow command
+  ```shell
+  patrick@opensuse:ffmpeg-4.2.1$ ./configure --list-decoders | grep media
+  // command result
+    ac3                     h264_mediacodec         pcx
+    adpcm_dtk               hevc_mediacodec         prores
+    cljr                    mpeg2_mediacodec        vc1
+    dds                     mpeg4_mediacodec        vmdaudio
+    dst                     mss2                    vp8_mediacodec
+    dxtory                  mwsc                    vp9_mediacodec
+  ```
+
+
+
 
