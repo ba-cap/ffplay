@@ -49,6 +49,16 @@ cd ffmpeg-3.4.6
 
   some address see: https://trac.ffmpeg.org/wiki/HWAccelIntro
 
+  but this support --enable-hwaccel=h264_mediacodec in ffmpeg release version ffmpeg-3.4.6
+  ```
+  patrick@opensuse:ffmpeg-3.4.6$ ./configure --list-hwaccels | grep media
+  h264_mediacodec		mpeg2_d3d11va		vc1_vaapi
+  h264_vaapi		mpeg2_mediacodec	vp8_mediacodec
+  hevc_d3d11va		mpeg2_xvmc		vp9_mediacodec
+  hevc_dxva2		mpeg4_mediacodec	wmv3_d3d11va
+  hevc_mediacodec		mpeg4_mmal		wmv3_d3d11va2
+  ```
+
 + support --enable-decoder=h264_mediacodec
 
   use follow command
