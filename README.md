@@ -6,13 +6,18 @@
 ```
 mkdir -p ffmpeg
 cd ffmpeg
-# wget -c http://ffmpeg.org/releases/ffmpeg-3.4.6.tar.xz
-wget -c https://ffmpeg.org/releases/ffmpeg-4.2.1.tar.bz2
-tar jxvf ffmpeg-4.2.1.tar.bz2
-# tar Jxvf ffmpeg-3.4.6.tar.xz
+wget -c http://ffmpeg.org/releases/ffmpeg-3.4.6.tar.xz
+tar Jxvf ffmpeg-3.4.6.tar.xz
 cd ffmpeg-3.4.6
 
-// copy the BuildFfmpegForAndroid.sh into ffmpeg-4.2.1
+# wget -c https://ffmpeg.org/releases/ffmpeg-4.2.1.tar.bz2
+# tar jxvf ffmpeg-4.2.1.tar.bz2
+# cd ffmpeg-4.2.1
+
+//
+// 创建相关的软链接过去
+// ln -s YourScriptDir/android_ffmepg_build.sh
+// ln -s YourScriptDir/android_ffmepg_config.sh
 ```
 
 ## config your build env
@@ -73,6 +78,21 @@ cd ffmpeg-3.4.6
     dxtory                  mwsc                    vp9_mediacodec
   ```
 
++ how to fix `__wrap_swr_convert` dlopen problem
+
+when build ffmpeg configure set the 
+```
+  --enable-xmm-clobber-test 
+  --enable-neon-clobber-test
+```
+  do not enable that test, that only support Mircosoft windows
 
 
++ NDK version VS ffmpeg version
 
+ | ffmpeg version |      NDK version       |           备注                  |
+ |:---------------|:-----------------------|:--------------------------------|
+ | 4.2.1          |    含 r14 以及以后      | 不支持 android MediaCodec 硬解码 |
+ | 3.4.6          | r14 和 r16 r20 编译报错 | 支持 android MediaCodec 硬解码   |
+ 
+所以如果需要支持 android 硬解码需要使用 ffmpeg 的 3.4.6 版本进行编译。
