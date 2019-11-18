@@ -6,6 +6,7 @@ extern "C" {
 #include "libavcodec/avcodec.h"
 #include "libavcodec/jni.h"
 #include "libavformat/avformat.h"
+#include "libswresample/swresample.h"
 
 #ifdef __cplusplus
 }
@@ -54,7 +55,7 @@ static void  getAllDecoderName( std::string& decoder )
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject clazz)
+Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo3(JNIEnv *env, jobject clazz)
 {
     std::string hello = "Hello from C++ ";
     hello += avcodec_configuration();
@@ -82,7 +83,7 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
     {
         ALOGW(tag, "avformat_find_stream_info failed!");
     }
-    ALOGW(tag, "duration = %ld nb_streams = %d", ic->duration, ic->nb_streams);
+    ALOGW(tag, "duration = %lld nb_streams = %d", ic->duration, ic->nb_streams);
 
     int fps = 0;
     int videoStream = 0;
@@ -244,7 +245,7 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject cla
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo3(JNIEnv *env, jobject clazz)
+Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo(JNIEnv *env, jobject clazz)
 {
     std::string str(avcodec_configuration());
 
@@ -271,7 +272,7 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo3(JNIEnv *env, jobject cl
     }
 
     ALOGD(tag, "open file : %s success.", path);
-    ALOGD(tag, "duration  : %ld.", ic->duration);
+    ALOGD(tag, "duration  : %lld.", ic->duration);
     ALOGD(tag, "nb_streams: %d",    ic->nb_streams);
 
     int fps = 0;
@@ -298,7 +299,7 @@ Java_dai_anroid_media_ffplay_MainActivity_getFfplayInfo3(JNIEnv *env, jobject cl
             audioStream = i;
             ALOGD(tag, "this is audio");
             ALOGD(tag, "sample_rate   = %d",   stream->codecpar->sample_rate);
-            ALOGD(tag, "channel_layout= %lu", stream->codecpar->channel_layout);
+            ALOGD(tag, "channel_layout= %llu", stream->codecpar->channel_layout);
             ALOGD(tag, "channels      = %d",   stream->codecpar->channels);
             ALOGD(tag, "sample_format = %d",   stream->codecpar->format);
         }

@@ -13,6 +13,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTxtInfo;
 
     static {
+        //System.loadLibrary("avcodec");
+        //System.loadLibrary("avfilter");
+        //System.loadLibrary("avformat");
+        //System.loadLibrary("avutil");
+        //System.loadLibrary("swresample");
+        //System.loadLibrary("swscale");
         System.loadLibrary("ffplay1.0");
     }
 
