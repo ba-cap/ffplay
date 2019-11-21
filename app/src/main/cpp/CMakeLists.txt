@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.4.1)
 include_directories(
         include/ffmpeg
         nativehelper
+        opensles
 )
 
 ## shared library directory
@@ -85,7 +86,10 @@ add_library(
 
         SHARED
 
-        dai_android_media_ffplay_MainActivity.cpp
+        opensles/OpenAudio.h
+        opensles/OpenAudio.cpp
+        jni_AudioPlayer.cpp
+        jni_MainActivity.cpp
 )
 
 
@@ -96,7 +100,7 @@ target_link_libraries(
         avcodec avfilter avformat avutil swresample swscale
 
         # android
-        log android
+        log android OpenSLES
 
         #
         nativehelper

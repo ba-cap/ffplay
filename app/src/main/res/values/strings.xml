@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">ffplay</string>
+
+    <string name="strRecordStart">录制</string>
+    <string name="strRecordStop">停录</string>
+
+    <string name="strPlayStart">播放</string>
+    <string name="strPlayStop">停播</string>
+
+    <string name="strAudio">audio</string>
+
 </resources>

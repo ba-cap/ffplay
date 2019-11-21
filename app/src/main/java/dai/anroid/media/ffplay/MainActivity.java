@@ -1,26 +1,18 @@
 package dai.anroid.media.ffplay;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
 
     private TextView mTxtInfo;
-
-    static {
-        //System.loadLibrary("avcodec");
-        //System.loadLibrary("avfilter");
-        //System.loadLibrary("avformat");
-        //System.loadLibrary("avutil");
-        //System.loadLibrary("swresample");
-        //System.loadLibrary("swscale");
-        System.loadLibrary("ffplay1.0");
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +23,16 @@ public class MainActivity extends AppCompatActivity {
 
         mTxtInfo = findViewById(R.id.txtInformation);
         mTxtInfo.setText(getFfplayInfo());
+
+        findViewById(R.id.btnAudio).setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.btnAudio) {
+            Intent intent = new Intent(MainActivity.this, RecorderActivity.class);
+            startActivity(intent);
+        }
     }
 
     private native String getFfplayInfo();
@@ -38,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private void verifyStoragePermissions() {
         String[] storagePermissions = {
                 "android.permission.READ_EXTERNAL_STORAGE",
-                "android.permission.WRITE_EXTERNAL_STORAGE"
+                "android.permission.WRITE_EXTERNAL_STORAGE",
+                "android.permission.RECORD_AUDIO"
         };
 
         try {
