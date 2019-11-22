@@ -55,6 +55,7 @@ public final class MiscMediaPlayer extends BasePlayerImpl {
     private final AtomicReference<AbstractTypedPlayer> mCurrentTypedPlayer = new AtomicReference<>();
 
     private IBasePlayerListener mCurrentCallBack = null;
+    private final Object LockerCallback = new Object();
 
     private MiscMediaPlayer(Application context) {
         super(context);
@@ -92,23 +93,30 @@ public final class MiscMediaPlayer extends BasePlayerImpl {
         }
 
         DataSourceInner inner = new DataSourceInner(group, callback, source);
-        Message message = Message.obtain();
-        message.what = AbstractTypedPlayer.CMD_DATA_SOURCE_SET;
-        message.obj = inner;
-        handleMessage(message);
+
+        AbstractTypedPlayer oldPlayer = mCurrentTypedPlayer.getAndSet(thisPlayer);
+        final AbstractTypedPlayer newOne = mCurrentTypedPlayer.get();
+        if (null != oldPlayer) {
+            H.post(() -> {
+                notifyReleaseByForce();
+                oldPlayer.exit();
+                newOne.enter();
+            });
+        } else {
+            H.post(newOne::enter);
+        }
+        setBaseCallBack(callback);
+        newOne.setDataSource(group, callback, source);
     }
 
     public void changeDataSource(IDataSource source) throws Exception {
-        if (null == source) {
-            throw new Exception("Must have a source when change");
-        }
-
         AbstractTypedPlayer thisPlayer = mCurrentTypedPlayer.get();
         if (null == thisPlayer) {
             throw new Exception("[changeDataSource]: No media type playing");
         }
         thisPlayer.changeDataSource(source);
     }
+
 
     public void start() throws Exception {
         AbstractTypedPlayer thisPlayer = mCurrentTypedPlayer.get();
@@ -130,6 +138,7 @@ public final class MiscMediaPlayer extends BasePlayerImpl {
         AbstractTypedPlayer thisPlayer = mCurrentTypedPlayer.getAndSet(null);
         if (null != thisPlayer) {
             thisPlayer.release();
+            post(thisPlayer::exit);
         }
         setBaseCallBack(null);
     }
@@ -152,7 +161,7 @@ public final class MiscMediaPlayer extends BasePlayerImpl {
 
     public void changeDefinitionTo(IDefinition definition) {
         AbstractTypedPlayer thisPlayer = mCurrentTypedPlayer.get();
-        if (null != thisPlayer) {
+        if (null != thisPlayer && null != definition) {
             thisPlayer.changeDefinitionTo(definition);
         }
     }
@@ -168,7 +177,7 @@ public final class MiscMediaPlayer extends BasePlayerImpl {
 
     public void changePlayerTo(IPlayer player) {
         AbstractTypedPlayer thisPlayer = mCurrentTypedPlayer.get();
-        if (null != thisPlayer) {
+        if (null != thisPlayer && null != player) {
             thisPlayer.changePlayerTo(player);
         }
     }
@@ -204,49 +213,45 @@ public final class MiscMediaPlayer extends BasePlayerImpl {
         }
     }
 
-    private void setDataSourceImpl(DataSourceInner src) {
-        ViewGroup viewGroup = src.viewGroup;
-        IBasePlayerListener callback = src.callback;
-        IDataSource source = src.source;
+    public int getDuration() {
+        AbstractTypedPlayer current = mCurrentTypedPlayer.get();
+        if (current != null) {
+            return current.getDuration();
+        }
+        return -1;
+    }
 
-        AbstractTypedPlayer thisPlayer = null;
-        synchronized (mTypedPlayer) {
-            thisPlayer = mTypedPlayer.get(source.getMediaType());
+    public int getCurrentPosition() {
+        AbstractTypedPlayer current = mCurrentTypedPlayer.get();
+        if (current != null) {
+            return current.getCurrentPosition();
         }
-        AbstractTypedPlayer oldPlayer = mCurrentTypedPlayer.getAndSet(thisPlayer);
-        final AbstractTypedPlayer newOne = mCurrentTypedPlayer.get();
-        if (null != oldPlayer) {
-            notifyReleaseByForce();
-            oldPlayer.exit();
-            newOne.enter();
-        } else {
-            newOne.enter();
-        }
-        setBaseCallBack(callback);
-        newOne.setDataSource(viewGroup, callback, source);
+        return -1;
     }
 
     @Override
     void onHandlerMessage(Message msg) {
-        switch (msg.what) {
-            case AbstractTypedPlayer.CMD_DATA_SOURCE_SET: {
-                setDataSourceImpl((DataSourceInner) msg.obj);
-                break;
-            }
+        AbstractTypedPlayer current = mCurrentTypedPlayer.get();
+        if (null != current) {
+            current.processMessage(msg);
         }
     }
 
     private void setBaseCallBack(IBasePlayerListener callBack) {
-        mCurrentCallBack = callBack;
+        synchronized (LockerCallback) {
+            mCurrentCallBack = callBack;
+        }
     }
 
     private void notifyReleaseByForce() {
-        if (null == mCurrentCallBack)
-            return;
-        AbstractTypedPlayer player = mCurrentTypedPlayer.get();
-        if (null != player) {
-            mCurrentCallBack.onReleaseByForce(player.getMediaType());
-            player.eraseCallback();
+        synchronized (LockerCallback) {
+            if (null == mCurrentCallBack)
+                return;
+            AbstractTypedPlayer player = mCurrentTypedPlayer.get();
+            if (null != player) {
+                mCurrentCallBack.onReleaseByForce(player.getMediaType());
+                player.eraseCallback();
+            }
         }
     }
 

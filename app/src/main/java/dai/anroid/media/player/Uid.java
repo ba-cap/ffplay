@@ -1,11 +1,15 @@
 package dai.anroid.media.player;
 
+import android.media.MediaPlayer;
+
 import java.util.concurrent.atomic.AtomicReference;
 
 final class Uid {
 
     private Uid() {
     }
+
+    static final int BAD_SID = -1;
 
     private static final int GO_STEP = 2;
     private static long BASE_VALUE = 0;

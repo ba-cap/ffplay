@@ -4,7 +4,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public interface IMediaPlayer {
+public interface IMiscMediaPlayer {
 
     void setDataSource(ViewGroup group, IBasePlayerListener callback, IDataSource source);
 
@@ -16,7 +16,11 @@ public interface IMediaPlayer {
 
     void release();
 
-    long seekTo(int whereTo);
+    void seekTo(int whereTo);
+
+    int getDuration();
+
+    int getCurrentPosition();
 
     List<IDefinition> getSupportDefinitions();
 
