@@ -14,7 +14,7 @@ static OpenAudio *g_OpenAudio = nullptr;
 
 
 extern "C" JNIEXPORT void JNICALL
-Java_dai_anroid_media_ffplay_RecorderActivity__1init(JNIEnv *env, jobject clazz)
+Java_dai_android_media_ffplay_RecorderActivity__1init(JNIEnv *env, jobject clazz)
 {
     ALOGD(NDK_TAG, "init");
     if(nullptr == g_OpenAudio)
@@ -25,7 +25,7 @@ Java_dai_anroid_media_ffplay_RecorderActivity__1init(JNIEnv *env, jobject clazz)
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_dai_anroid_media_ffplay_RecorderActivity__1destroy(JNIEnv *env, jobject clazz)
+Java_dai_android_media_ffplay_RecorderActivity__1destroy(JNIEnv *env, jobject clazz)
 {
     ALOGD(NDK_TAG, "destroy");
     if (nullptr != g_OpenAudio)
@@ -38,7 +38,7 @@ Java_dai_anroid_media_ffplay_RecorderActivity__1destroy(JNIEnv *env, jobject cla
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_dai_anroid_media_ffplay_RecorderActivity__1stopPlay(JNIEnv *env, jobject clazz)
+Java_dai_android_media_ffplay_RecorderActivity__1stopPlay(JNIEnv *env, jobject clazz)
 {
     if(nullptr == g_OpenAudio)
     {
@@ -50,7 +50,7 @@ Java_dai_anroid_media_ffplay_RecorderActivity__1stopPlay(JNIEnv *env, jobject cl
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_dai_anroid_media_ffplay_RecorderActivity__1stopRecord(JNIEnv *env, jobject clazz)
+Java_dai_android_media_ffplay_RecorderActivity__1stopRecord(JNIEnv *env, jobject clazz)
 {
     if (nullptr == g_OpenAudio)
     {
@@ -62,7 +62,7 @@ Java_dai_anroid_media_ffplay_RecorderActivity__1stopRecord(JNIEnv *env, jobject 
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_dai_anroid_media_ffplay_RecorderActivity__1isPlaying(JNIEnv *env, jobject clazz)
+Java_dai_android_media_ffplay_RecorderActivity__1isPlaying(JNIEnv *env, jobject clazz)
 {
     if(nullptr == g_OpenAudio)
     {
@@ -73,7 +73,7 @@ Java_dai_anroid_media_ffplay_RecorderActivity__1isPlaying(JNIEnv *env, jobject c
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_dai_anroid_media_ffplay_RecorderActivity__1isRecord(JNIEnv *env, jobject clazz)
+Java_dai_android_media_ffplay_RecorderActivity__1isRecord(JNIEnv *env, jobject clazz)
 {
     if(nullptr == g_OpenAudio)
     {
@@ -85,7 +85,7 @@ Java_dai_anroid_media_ffplay_RecorderActivity__1isRecord(JNIEnv *env, jobject cl
 
 
 extern "C" JNIEXPORT void JNICALL
-Java_dai_anroid_media_ffplay_RecorderActivity__1startRecord(JNIEnv *env, jobject clazz, jstring file)
+Java_dai_android_media_ffplay_RecorderActivity__1startRecord(JNIEnv *env, jobject clazz, jstring file)
 {
     const char *c_str_file = env->GetStringUTFChars(file, nullptr);
     ALOGD(NDK_TAG, "start record to file: %s.", c_str_file);
@@ -99,7 +99,7 @@ Java_dai_anroid_media_ffplay_RecorderActivity__1startRecord(JNIEnv *env, jobject
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_dai_anroid_media_ffplay_RecorderActivity__1startPlay(JNIEnv *env, jobject clazz, jstring file)
+Java_dai_android_media_ffplay_RecorderActivity__1startPlay(JNIEnv *env, jobject clazz, jstring file)
 {
     const char *c_str_file = env->GetStringUTFChars(file, nullptr);
     ALOGD(NDK_TAG, "start play from file: %s.", c_str_file);

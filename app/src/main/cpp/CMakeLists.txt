@@ -89,7 +89,7 @@ add_library(
         opensles/OpenAudio.h
         opensles/OpenAudio.cpp
         jni_AudioPlayer.cpp
-        jni_MainActivity.cpp
+        jni_demo.cpp
 )
 
 

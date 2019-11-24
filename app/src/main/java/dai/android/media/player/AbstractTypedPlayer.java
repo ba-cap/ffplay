@@ -1,11 +1,11 @@
-package dai.anroid.media.player;
+package dai.android.media.player;
 
 import android.os.Message;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 
-import dai.anroid.media.player.state.IState;
+import dai.android.media.player.state.IState;
 
 public abstract class AbstractTypedPlayer<CB extends IBasePlayerListener>
         implements IState, IMiscMediaPlayer {

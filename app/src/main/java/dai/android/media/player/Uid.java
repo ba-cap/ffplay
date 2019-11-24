@@ -1,6 +1,4 @@
-package dai.anroid.media.player;
-
-import android.media.MediaPlayer;
+package dai.android.media.player;
 
 import java.util.concurrent.atomic.AtomicReference;
 

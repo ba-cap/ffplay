@@ -13,7 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        applicationId "dai.anroid.media.ffplay"
+        applicationId "dai.android.media.ffplay"
 
         externalNativeBuild {
             cmake {

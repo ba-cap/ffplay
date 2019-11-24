@@ -1,4 +1,4 @@
-package dai.anroid.media.player;
+package dai.android.media.player;
 
 import android.view.ViewGroup;
 

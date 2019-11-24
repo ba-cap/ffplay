@@ -1,4 +1,4 @@
-package dai.anroid.media.ffplay;
+package dai.android.media.ffplay;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;

@@ -1,4 +1,4 @@
-package dai.anroid.media.player.state;
+package dai.android.media.player.state;
 
 import android.os.Message;
 
