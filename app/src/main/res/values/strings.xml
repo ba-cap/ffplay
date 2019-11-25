@@ -7,6 +7,6 @@
     <string name="strPlayStart">播放</string>
     <string name="strPlayStop">停播</string>
 
-    <string name="strAudio">audio</string>
+    <string name="strAudio">至录音界面</string>
 
 </resources>
