@@ -111,6 +111,3 @@ Java_dai_android_media_ffplay_RecorderActivity__1startPlay(JNIEnv *env, jobject 
 
     env->ReleaseStringUTFChars(file, c_str_file);
 }
-
-
-

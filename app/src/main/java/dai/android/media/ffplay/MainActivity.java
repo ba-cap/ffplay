@@ -2,6 +2,7 @@ package dai.android.media.ffplay;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,15 +26,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTxtInfo.setText(getFfplayInfo());
 
         findViewById(R.id.btnAudio).setOnClickListener(this);
+        findViewById(R.id.btnPlayPcmAudio).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.btnAudio) {
-            Intent intent = new Intent(MainActivity.this, RecorderActivity.class);
-            startActivity(intent);
+        switch (v.getId()) {
+            case R.id.btnAudio: {
+                Intent intent = new Intent(MainActivity.this, RecorderActivity.class);
+                startActivity(intent);
+                break;
+            }
+
+            case R.id.btnPlayPcmAudio: {
+                new Thread(() -> {
+                    playAudio(getAssets(), "demo/demo-audio-test.pcm");
+                }).start();
+
+                break;
+            }
         }
     }
+
+    private native void playAudio(AssetManager assetManager, String name);
 
     private native String getFfplayInfo();
 

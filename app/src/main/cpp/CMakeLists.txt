@@ -88,8 +88,10 @@ add_library(
 
         opensles/OpenAudio.h
         opensles/OpenAudio.cpp
+        demo.h
         jni_AudioPlayer.cpp
         jni_demo.cpp
+        jni_PCM_demo.cpp
 )
 
 
