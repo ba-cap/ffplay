@@ -37,8 +37,8 @@ public class XGLSurfaceView extends SurfaceView implements Runnable, SurfaceHold
             mWorkThread.interrupt();
         }
 
-        mWorkThread = new Thread(this);
-        mWorkThread.start();
+        //mWorkThread = new Thread(this);
+        //mWorkThread.start();
     }
 
     @Override

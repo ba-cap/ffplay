@@ -92,6 +92,7 @@ add_library(
         jni_AudioPlayer.cpp
         jni_demo.cpp
         jni_PCM_demo.cpp
+        jni_YUV_demo.cc
 )
 
 
@@ -102,7 +103,7 @@ target_link_libraries(
         avcodec avfilter avformat avutil swresample swscale
 
         # android
-        log android OpenSLES
+        log android OpenSLES EGL GLESv3
 
         #
         nativehelper

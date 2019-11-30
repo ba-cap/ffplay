@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.btnAudio).setOnClickListener(this);
         findViewById(R.id.btnPlayPcmAudio).setOnClickListener(this);
+        findViewById(R.id.btnPlayYUV420P).setOnClickListener(this);
     }
 
     @Override
@@ -42,7 +43,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Thread(() -> {
                     playAudio(getAssets(), "demo/demo-audio-test.pcm");
                 }).start();
+                break;
+            }
 
+            case R.id.btnPlayYUV420P: {
+                Intent intent = new Intent(MainActivity.this, YuvPlayActivity.class);
+                startActivity(intent);
                 break;
             }
         }

@@ -39,10 +39,8 @@ static long long getCurrentMillisecond()
 static void getAllDecoderName(std::string& decoder)
 {
     AVCodec *codec = av_codec_next(nullptr);
-    while (nullptr != codec)
-    {
-        if (codec->decode != nullptr && codec->type == AVMEDIA_TYPE_VIDEO)
-        {
+    while (nullptr != codec) {
+        if (codec->decode != nullptr && codec->type == AVMEDIA_TYPE_VIDEO) {
             char szBuffer[128] = {0x00};
             snprintf(szBuffer, 127, "%s\n", codec->name);
             decoder += szBuffer;
@@ -52,10 +50,8 @@ static void getAllDecoderName(std::string& decoder)
 
 static void print_av_stream_info(int type, const AVStream *stream )
 {
-    switch(type)
-    {
-        case AVMEDIA_TYPE_VIDEO:
-            {
+    switch(type) {
+        case AVMEDIA_TYPE_VIDEO: {
                 ALOGI(tag, "video stream information:");
                 ALOGI(tag, "     width: %d", stream->codecpar->width);
                 ALOGI(tag, "    height: %d", stream->codecpar->height);
@@ -64,8 +60,7 @@ static void print_av_stream_info(int type, const AVStream *stream )
                 break;
             }
 
-        case AVMEDIA_TYPE_AUDIO:
-            {
+        case AVMEDIA_TYPE_AUDIO: {
                 ALOGI(tag, "audio stream information:");
                 ALOGI(tag, "  sample rate: %d", stream->codecpar->sample_rate);
                 ALOGI(tag, "     channels: %d", stream->codecpar->channels);
@@ -73,8 +68,7 @@ static void print_av_stream_info(int type, const AVStream *stream )
                 break;
             }
 
-        default:
-            {
+        default: {
                 ALOGW(tag, "unknown stream type: %d.", type);
                 break;
             }
@@ -112,14 +106,12 @@ Java_dai_android_media_ffplay_MainActivity_playAudio(
 
     AAssetManager *assetManager = AAssetManager_fromJava(env, manager);
     AAsset        *asset        = nullptr;
-    if(nullptr == assetManager)
-    {
+    if(nullptr == assetManager) {
         goto END_AND_RELEASE;
     }
 
     asset = AAssetManager_open(assetManager, path, AASSET_MODE_UNKNOWN);
-    if(nullptr == asset)
-    {
+    if(nullptr == asset) {
         ALOGW(tag, "open asset file %s failed.", path);
         goto END_AND_RELEASE;
     }
@@ -133,19 +125,16 @@ Java_dai_android_media_ffplay_MainActivity_playAudio(
     play_audio_pcm(file_buffer, (size_t)read_bytes);
 
 END_AND_RELEASE:
-    if(nullptr != assetManager)
-    {
+    if(nullptr != assetManager) {
         assetManager = nullptr;
     }
 
-    if(nullptr != asset)
-    {
+    if(nullptr != asset) {
         AAsset_close(asset);
         asset = nullptr;
     }
 
-    if(nullptr != file_buffer)
-    {
+    if(nullptr != file_buffer) {
         delete[] file_buffer;
         file_buffer = nullptr;
     }
@@ -177,8 +166,7 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
 
     AVFormatContext *pFmtCtx = nullptr;
     int result = avformat_open_input(&pFmtCtx, path, nullptr, nullptr);
-    if (0 != result )
-    {
+    if (0 != result ) {
         ALOGE(tag, "ffmpeg open file:%s failed, reason:%s.", path, av_err2str(result));
         return;
     }
@@ -187,8 +175,7 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
 
     // get the stream information
     result = avformat_find_stream_info(pFmtCtx, nullptr);
-    if (0 != result)
-    {
+    if (0 != result) {
         ALOGW(tag, "ffmpeg find stream info failed, reason:%s.", av_err2str(result));
     }
 
@@ -200,22 +187,18 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
     int stream_video = 0;
     int stream_audio = 1;
 
-    for(int i = 0; i < pFmtCtx->nb_streams; ++i)
-    {
+    for(int i = 0; i < pFmtCtx->nb_streams; ++i) {
         AVStream *stream = pFmtCtx->streams[i];
 
         enum AVMediaType codec_type = stream->codecpar->codec_type;
-        switch (codec_type)
-        {
-            case AVMEDIA_TYPE_VIDEO:
-                {
+        switch (codec_type) {
+            case AVMEDIA_TYPE_VIDEO: {
                     stream_video = i;
                     break;
                 }
 
 
-            case AVMEDIA_TYPE_AUDIO:
-                {
+            case AVMEDIA_TYPE_AUDIO: {
                     stream_audio = i;
                     break;
                 }
@@ -234,15 +217,13 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
     // first we use the hardware decoder
     AVCodec *codec_video = nullptr;
     codec_video = avcodec_find_decoder_by_name("h264_mediacodec");
-    if(nullptr == codec_video)
-    {
+    if(nullptr == codec_video) {
         ALOGE(tag, "can not find the video decoder named: 'h264_mediacodec', use soft decoder");
         // use the soft decoder
         codec_video = avcodec_find_decoder(pFmtCtx->streams[stream_video]->codecpar->codec_id);
     }
 
-    if(nullptr == codec_video)
-    {
+    if(nullptr == codec_video) {
         ALOGE(tag, "can not find any hardware or soft video decoder");
         return;
     }
@@ -254,8 +235,7 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
     ctx_video->thread_count = 4;
 
     result = avcodec_open2(ctx_video, nullptr, nullptr);
-    if (0 != result)
-    {
+    if (0 != result) {
         ALOGE(tag, "open video coder failed, reason: %s.", av_err2str(result));
         return;
     }
@@ -269,13 +249,11 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
     /// codec_audio = avcodec_find_decoder_by_name("h264_mediacodec");
     // test show:
     // not support hardware for audio
-    if(nullptr == codec_audio)
-    {
+    if(nullptr == codec_audio) {
         ALOGE(tag, "can not find the audio decoder named: 'h264_mediacodec', use soft decoder");
         codec_audio = avcodec_find_decoder(pFmtCtx->streams[stream_audio]->codecpar->codec_id);
     }
-    if(nullptr == codec_audio)
-    {
+    if(nullptr == codec_audio) {
         ALOGE(tag, "can not find any hardware or soft audio decoder");
         return;
     }
@@ -287,8 +265,7 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
 
     // open the decoder
     result = avcodec_open2(ctx_audio, nullptr, nullptr);
-    if(0 != result)
-    {
+    if(0 != result) {
         ALOGE(tag, "open audio coder failed, reason: %s.", av_err2str(result));
         return;
     }
@@ -319,8 +296,7 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
                         ctx_audio->sample_fmt, ctx_audio->sample_rate,
                         0, nullptr );
     result = swr_init(swr_ctx_audio);
-    if(0 != result)
-    {
+    if(0 != result) {
         ALOGW(tag, "int swr failed, reason: %s", av_err2str(result));
     }
     char *pcm = new char[48000 * 4 * 2];
@@ -332,11 +308,9 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
     ANativeWindow_Buffer win_buffer;
 
     // loop
-    for( ; ; )
-    {
+    for( ; ; ) {
         long long time_current = getCurrentMillisecond();
-        if(time_current - time_start >= 3000)
-        {
+        if(time_current - time_start >= 3000) {
             ALOGD(tag, ">>>> decode fps is %d.", frame_count / 3);
             time_start  = time_current;
             frame_count = 0;
@@ -345,12 +319,10 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
         bool end_will_seek = false;
 
         result = av_read_frame(pFmtCtx, pkt);
-        if (0 != result)
-        {
+        if (0 != result) {
             ALOGI(tag, ">>>> end tail of file");
 
-            if(!end_will_seek)
-            {
+            if(!end_will_seek) {
                 break;
             }
 
@@ -362,16 +334,11 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
 
         // base AVCodecContext
         AVCodecContext *ctx_codec_base = nullptr;
-        if(pkt->stream_index == stream_video)
-        {
+        if(pkt->stream_index == stream_video) {
             ctx_codec_base = ctx_video;
-        }
-        else if(pkt->stream_index == stream_audio)
-        {
+        } else if(pkt->stream_index == stream_audio) {
             ctx_codec_base = ctx_audio;
-        }
-        else
-        {
+        } else {
             ALOGW(tag, "bad unknown package stream index = %d.", pkt->stream_index);
             continue;
         }
@@ -383,24 +350,20 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
         int p = pkt->pts;
         av_packet_unref(pkt);
 
-        if(0 != result)
-        {
+        if(0 != result) {
             ALOGW(tag, ">>>> send package failed.");
             continue;
         }
 
         // inner loop
-        for(;;)
-        {
+        for(;;) {
             result = avcodec_receive_frame(ctx_codec_base, frame);
-            if( 0 != result)
-            {
+            if( 0 != result) {
                 break;
             }
 
             // video frame
-            if(ctx_codec_base == ctx_video)
-            {
+            if(ctx_codec_base == ctx_video) {
                 frame_count++;
 
                 sws_ctx_video = sws_getCachedContext(
@@ -411,12 +374,9 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
                                     AV_PIX_FMT_RGBA,
                                     SWS_FAST_BILINEAR,
                                     nullptr, nullptr, nullptr);
-                if(!sws_ctx_video)
-                {
+                if(!sws_ctx_video) {
                     ALOGW(tag, "sws obtain cached context failed");
-                }
-                else
-                {
+                } else {
                     uint8_t *data[AV_NUM_DATA_POINTERS] = {0};
                     data[0]  = (uint8_t *)rgb;
                     int lines[AV_NUM_DATA_POINTERS] = {0};
@@ -427,8 +387,7 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
                                 frame->linesize, 0,
                                 frame->height, data, lines);
                     ALOGI(tag, ">>>> scale %d", h);
-                    if(h > 0)
-                    {
+                    if(h > 0) {
                         ANativeWindow_lock(native_win, &win_buffer, 0);
                         uint8_t *dst = (uint8_t *)win_buffer.bits;
                         memcpy(dst, rgb, out_width * out_height * 4);
@@ -438,8 +397,7 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
             }
 
             // audio frame
-            if(ctx_codec_base == ctx_audio)
-            {
+            if(ctx_codec_base == ctx_audio) {
                 uint8_t *out[2] = {0};
                 out[0] = (uint8_t *) pcm;
 
@@ -463,5 +421,18 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
 
     // release the Java String
     env->ReleaseStringUTFChars(url, path);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_dai_android_media_ffplay_YuvPlayActivity_playYuvVideo(
+    JNIEnv *env, jobject thiz,
+    jobject surface, jstring path)
+{
+    const char *videoUrl = env->GetStringUTFChars(path, nullptr);
+
+    play_video_yuv(env, surface, videoUrl);
+
+    env->ReleaseStringUTFChars(path, videoUrl);
 }
 

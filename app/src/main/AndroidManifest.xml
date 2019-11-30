@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".YuvPlayActivity" />
         <activity android:name=".RecorderActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

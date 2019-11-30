@@ -10,12 +10,27 @@
         android:layout_width="match_parent"
         android:layout_height="320dp" />
 
-    <Button
-        android:id="@+id/btnPlayPcmAudio"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/strPlayPcmAudio" />
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnPlayYUV420P"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/strPlayYuv420p" />
+
+        <Button
+            android:id="@+id/btnPlayPcmAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/strPlayPcmAudio" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnAudio"

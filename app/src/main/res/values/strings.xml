@@ -10,5 +10,6 @@
     <string name="strAudio">至录音界面</string>
 
     <string name="strPlayPcmAudio">播放PCM文件</string>
+    <string name="strPlayYuv420p">播放yuv420p文件</string>
 
 </resources>
