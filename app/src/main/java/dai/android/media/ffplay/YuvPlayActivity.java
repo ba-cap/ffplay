@@ -115,14 +115,14 @@ public class YuvPlayActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             Log.d(TAG, "surfaceCreated");
-
-            mThread = new Thread(() -> playYuvVideo(holder.getSurface(), mPlayUrl));
-            mThread.start();
         }
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            Log.d(TAG, "surfaceChanged");
+            Log.d(TAG, "surfaceChanged: format=" + format + ", width=" + width + ", height=" + height);
+
+            mThread = new Thread(() -> playYuvVideo(holder.getSurface(), mPlayUrl));
+            mThread.start();
         }
 
         @Override
