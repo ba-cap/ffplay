@@ -93,6 +93,7 @@ add_library(
         jni_demo.cpp
         jni_PCM_demo.cpp
         jni_YUV_demo.cc
+        jni_YUV_demo_book.cc
 )
 
 
@@ -103,7 +104,7 @@ target_link_libraries(
         avcodec avfilter avformat avutil swresample swscale
 
         # android
-        log android OpenSLES EGL GLESv3
+        log android OpenSLES EGL GLESv2
 
         #
         nativehelper

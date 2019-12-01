@@ -431,7 +431,8 @@ Java_dai_android_media_ffplay_YuvPlayActivity_playYuvVideo(
 {
     const char *videoUrl = env->GetStringUTFChars(path, nullptr);
 
-    play_video_yuv(env, surface, videoUrl);
+    // play_video_yuv(env, surface, videoUrl);
+    play_video_yuv_book(env, surface, videoUrl);
 
     env->ReleaseStringUTFChars(path, videoUrl);
 }
