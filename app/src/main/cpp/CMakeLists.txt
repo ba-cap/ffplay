@@ -101,6 +101,7 @@ add_library(
         xplayer/IDemux.cc
         xplayer/XData.cc
         xplayer/XLog.cc
+        xplayer/XThread.cc
 
 )
 

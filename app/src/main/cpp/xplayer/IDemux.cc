@@ -4,3 +4,15 @@
 //
 
 #include "IDemux.h"
+
+void IDemux::main()
+{
+    while (!mIsExit)
+    {
+        XData d = Read();
+        if(d.size <= 0)
+        {
+            break;
+        }
+    }
+}

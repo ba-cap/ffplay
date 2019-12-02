@@ -7,13 +7,16 @@
 #define _IDEMUX_H_INCLUDE
 
 #include "XData.h"
+#include "XThread.h"
 
 // 解封装接口
-class IDemux
+class IDemux: public XThread
 {
 protected:
     // 总时长(毫秒)
     int mTotalMillisecond;
+
+    virtual void main();
 
 public:
     // 打开文件, 流媒体(rtmp, http rtsp)
