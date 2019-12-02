@@ -7,6 +7,7 @@ include_directories(
         include/ffmpeg
         nativehelper
         opensles
+        xplayer
 )
 
 ## shared library directory
@@ -94,6 +95,13 @@ add_library(
         jni_PCM_demo.cpp
         jni_YUV_demo.cc
         jni_YUV_demo_book.cc
+
+        # code for xplayer
+        xplayer/FFDemux.cc
+        xplayer/IDemux.cc
+        xplayer/XData.cc
+        xplayer/XLog.cc
+
 )
 
 
