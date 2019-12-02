@@ -22,6 +22,8 @@ public:
     // 打开文件, 流媒体(rtmp, http rtsp)
     virtual bool Open(const char *url);
 
+    virtual XParameter getParameter();
+
     // 读取(帧数据) 数据由调用者清理
     virtual XData Read();
 

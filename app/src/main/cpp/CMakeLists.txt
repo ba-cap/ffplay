@@ -103,6 +103,9 @@ add_library(
         xplayer/XData.cc
         xplayer/XLog.cc
         xplayer/XThread.cc
+        xplayer/IDecode.cc
+        xplayer/FFDecode.cc
+        xplayer/XParameter.cc
 
 )
 

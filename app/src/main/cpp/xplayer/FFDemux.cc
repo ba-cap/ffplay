@@ -64,6 +64,25 @@ bool FFDemux::Open(const char *url)
     return true;
 }
 
+XParameter FFDemux::getParameter()
+{
+    if(!ic)
+    {
+        return XParameter();
+    }
+
+    // 获取视频流索引
+    int video_idx = av_find_best_stream(ic, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
+    if(video_idx < 0)
+    {
+        XLOGE("ffmpeg find video index failed");
+        return XParameter();
+    }
+    XParameter parameter;
+    parameter.para = ic->streams[video_idx]->codecpar;
+    return parameter;
+}
+
 XData FFDemux::Read()
 {
     if(!ic)
