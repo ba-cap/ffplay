@@ -99,6 +99,7 @@ add_library(
         # code for xplayer
         xplayer/FFDemux.cc
         xplayer/IDemux.cc
+        xplayer/IObserver.cc
         xplayer/XData.cc
         xplayer/XLog.cc
         xplayer/XThread.cc

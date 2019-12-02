@@ -7,10 +7,10 @@
 #define _IDEMUX_H_INCLUDE
 
 #include "XData.h"
-#include "XThread.h"
+#include "IObserver.h"
 
 // 解封装接口
-class IDemux: public XThread
+class IDemux: public IObserver
 {
 protected:
     // 总时长(毫秒)
