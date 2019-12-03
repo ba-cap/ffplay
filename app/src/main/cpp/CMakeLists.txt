@@ -106,6 +106,11 @@ add_library(
         xplayer/IDecode.cc
         xplayer/FFDecode.cc
         xplayer/XParameter.cc
+        xplayer/IVideoView.cc
+        xplayer/GLVideoView.cc
+        xplayer/XTexture.cc
+        xplayer/XShader.cc
+        xplayer/XEGL.cc
 
 )
 
