@@ -61,10 +61,14 @@ bool FFDemux::Open(const char *url)
 
     XLOGI("total duration: %s ms", mTotalMillisecond );
 
+    // 在 open 时调用一下
+    getVideoParameter();
+    getAudioParameter();
+
     return true;
 }
 
-XParameter FFDemux::getParameter()
+XParameter FFDemux::getVideoParameter()
 {
     if(!ic)
     {
@@ -72,14 +76,33 @@ XParameter FFDemux::getParameter()
     }
 
     // 获取视频流索引
-    int video_idx = av_find_best_stream(ic, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
-    if(video_idx < 0)
+    video_stream_idx = av_find_best_stream(ic, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
+    if(video_stream_idx < 0)
     {
         XLOGE("ffmpeg find video index failed");
         return XParameter();
     }
     XParameter parameter;
-    parameter.para = ic->streams[video_idx]->codecpar;
+    parameter.para = ic->streams[video_stream_idx]->codecpar;
+    return parameter;
+}
+
+XParameter FFDemux::getAudioParameter()
+{
+    if(!ic)
+    {
+        return XParameter();
+    }
+
+    // 获取视频流索引
+    audio_stream_idx  = av_find_best_stream(ic, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
+    if(audio_stream_idx < 0)
+    {
+        XLOGE("ffmpeg find audio index failed");
+        return XParameter();
+    }
+    XParameter parameter;
+    parameter.para = ic->streams[audio_stream_idx]->codecpar;
     return parameter;
 }
 
@@ -103,6 +126,24 @@ XData FFDemux::Read()
     XLOGI("packet size is %d pts %ld", pkt->size, pkt->pts);
     data.data = (unsigned char *)pkt;
     data.size = pkt->size;
+
+    // audio stream
+    if(pkt->stream_index == audio_stream_idx)
+    {
+        data.type = DATA_AUDIO;
+    }
+    // video stream
+    else if(pkt->stream_index == video_stream_idx)
+    {
+        data.type = DATA_VIDEO;
+    }
+    // neither video or audio
+    // drop and destroy the data
+    else
+    {
+        av_packet_free(&pkt);
+        return XData();
+    }
 
     return data;
 }

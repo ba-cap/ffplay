@@ -20,6 +20,7 @@ public:
 
     virtual bool send_packet(XData pkt);
 
+    // 从线程中获取解码结果, 再次调用复用上次空间(线程不安全)
     virtual XData receive_frame();
 
 protected:

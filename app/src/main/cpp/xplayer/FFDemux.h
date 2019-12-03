@@ -15,6 +15,8 @@ class FFDemux: public IDemux
 {
 private:
     AVFormatContext *ic = nullptr;
+    int audio_stream_idx = -1;
+    int video_stream_idx = -1;
 
 public:
     FFDemux();
@@ -22,7 +24,10 @@ public:
     // 打开文件, 流媒体(rtmp, http rtsp)
     virtual bool Open(const char *url);
 
-    virtual XParameter getParameter();
+    virtual XParameter getVideoParameter();
+
+    virtual XParameter getAudioParameter();
+
 
     // 读取(帧数据) 数据由调用者清理
     virtual XData Read();

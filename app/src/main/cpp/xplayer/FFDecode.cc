@@ -48,6 +48,22 @@ bool FFDecode::open(XParameter parameter)
 
     XLOGI("ffmpeg code open2 success");
 
+    // video type
+    if(codec->codec_type == AVMEDIA_TYPE_VIDEO)
+    {
+        this->type = data_type::DATA_VIDEO;
+    }
+    // audio type
+    else if(codec->codec_type == AVMEDIA_TYPE_AUDIO)
+    {
+        this->type = data_type::DATA_AUDIO;
+    }
+    // drop unknown type
+    else
+    {
+        this->type = data_type::UNKNOWN;
+    }
+
 
     return true;
 }
@@ -98,11 +114,18 @@ XData FFDecode::receive_frame()
     // TODO
     XData data;
     data.data = (unsigned char *)frame;
+    // video data
     if(codec->codec_type == AVMEDIA_TYPE_VIDEO)
     {
         data.size += frame->linesize[0];
         data.size += frame->linesize[1];
         data.size += frame->linesize[2];
+    }
+    // audio data
+    else if(codec->codec_type == AVMEDIA_TYPE_AUDIO)
+    {
+        // 样本字节数 * 单通道样本数 * 通道数
+        data.size = av_get_bytes_per_sample((AVSampleFormat)frame->format ) * frame->nb_samples * 2;
     }
 
     return data;
