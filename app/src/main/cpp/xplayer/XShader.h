@@ -7,8 +7,15 @@
 #define _XSHADER_H_INCLUDE
 
 
+#include <GLES2/gl2.h>
+
 class XShader
 {
+private:
+    GLuint mGLProgram;
+
+public:
+    virtual bool init();
 
 };
 
