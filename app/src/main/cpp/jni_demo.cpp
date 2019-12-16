@@ -7,6 +7,7 @@ extern "C" {
 #include <libswresample/swresample.h>
 }
 
+#include <inttypes.h>
 #include <jni.h>
 #include <string>
 #include <android/native_window.h>
@@ -180,7 +181,7 @@ Java_dai_android_media_ffplay_XGLSurfaceView_open_1player(
     }
 
     // print the stream base info
-    ALOGD(tag, "duration: %lld,  streams: %d", pFmtCtx->duration, pFmtCtx->nb_streams);
+    ALOGD(tag, "duration: %lld, streams: %d", pFmtCtx->duration, pFmtCtx->nb_streams);
 
     // base info
     int fps          = 0;

@@ -12,11 +12,16 @@
 class XShader
 {
 private:
-    GLuint mGLProgram;
+    GLuint mGLProgram    = 0;
+    GLuint mTextures[64] = { 0x00 };
 
 public:
     virtual bool init();
 
+    // 获取材质, 并映射到内存
+    virtual void getTexture(unsigned int index, int width, int height, unsigned char *buffer);
+
+    virtual void draw();
 };
 
 

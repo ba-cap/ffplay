@@ -64,7 +64,6 @@ bool FFDecode::open(XParameter parameter)
         this->type = data_type::UNKNOWN;
     }
 
-
     return true;
 }
 
@@ -120,6 +119,9 @@ XData FFDecode::receive_frame()
         data.size += frame->linesize[0];
         data.size += frame->linesize[1];
         data.size += frame->linesize[2];
+
+        data.width  = frame->width;
+        data.height = frame->height;
     }
     // audio data
     else if(codec->codec_type == AVMEDIA_TYPE_AUDIO)
@@ -127,6 +129,8 @@ XData FFDecode::receive_frame()
         // 样本字节数 * 单通道样本数 * 通道数
         data.size = av_get_bytes_per_sample((AVSampleFormat)frame->format ) * frame->nb_samples * 2;
     }
+
+    memcpy(data.datas, frame->data, sizeof(data.datas));
 
     return data;
 }

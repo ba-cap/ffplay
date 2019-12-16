@@ -19,6 +19,11 @@ struct XData
     int size = 0;
     data_type type = UNKNOWN;
 
+    unsigned char *datas[8] = { 0x00 };
+
+    int width  = 0;
+    int height = 0;
+
     void drop();
 };
 

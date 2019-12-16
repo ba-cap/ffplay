@@ -9,6 +9,13 @@
 
 class XTexture
 {
+public:
+    virtual bool init(void *window) = 0;
+
+    virtual void draw(unsigned char *data[], int width, int height) = 0;
+
+public:
+    static XTexture *create();
 
 };
 

@@ -168,7 +168,6 @@ EXIT:
 }
 
 
-
 bool XShader::init()
 {
     mGLProgram = load_program(str_shader_vertex, str_shader_fragment_YUV420P);
@@ -202,7 +201,52 @@ bool XShader::init()
 
     XLOGI("shader init success");
 
-
-
     return true;
 }
+
+void XShader::draw()
+{
+    if(mGLProgram == 0)
+    {
+        XLOGE("shader program is ZERO");
+        return;
+    }
+
+    // 三角形绘制
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
+void XShader::getTexture(unsigned int index, int width, int height, unsigned char *buffer)
+{
+
+    if(mTextures[index] == 0)
+    {
+        // 材质初始化
+        // 1- 创建材质
+        glGenTextures(1, &mTextures[index]);
+        // 2- 绑定纹理属性
+        glBindTexture(GL_TEXTURE_2D, mTextures[index]);
+        // 3- 设置最大 最小过滤器
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // 4- 设置纹理格式和大小
+        //    播放 NV12 时是有区别
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,                // 默认细节0
+            GL_LUMINANCE,     // GPU内部格式, 亮度/灰度图
+            width, height,
+            0,                // 边框
+            GL_LUMINANCE,     // 数据像素格式 亮度/灰度图  与上面保持一直
+            GL_UNSIGNED_BYTE, // 像素数据类型
+            nullptr           // 纹理数据
+        );
+    }
+
+    // 激活相应层次纹理, 并绑定到创建的 OPENGL 纹理
+    glActiveTexture(GL_TEXTURE0 + index);
+    glBindTexture(GL_TEXTURE_2D, mTextures[index]);
+    // 替换纹理内容
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_LUMINANCE, GL_UNSIGNED_BYTE, buffer);
+}
+

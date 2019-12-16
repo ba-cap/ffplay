@@ -91,6 +91,23 @@ public:
 
         return true;
     }
+
+    virtual void draw()
+    {
+        if(EGL_NO_DISPLAY == mDisplay)
+        {
+            XLOGE("No EGLDisplay in CXEGL::draw()");
+            return;
+        }
+
+        if(EGL_NO_SURFACE == mSurface)
+        {
+            XLOGE("No EGLSurface in CXEGL::draw()");
+            return;
+        }
+
+        eglSwapBuffers(mDisplay, mSurface);
+    }
 };
 
 

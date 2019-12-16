@@ -7,9 +7,20 @@
 #define _GLVIDEOVIEW_H_INCLUDE
 
 
-class GLVideoView
-{
+#include "IVideoView.h"
 
+class XTexture;
+
+class GLVideoView: public IVideoView
+{
+protected:
+    void     *mView    = nullptr;
+    XTexture *mTexture = nullptr;
+
+public:
+    virtual void setRender(void *win);
+
+    virtual void render(XData data);
 };
 
 

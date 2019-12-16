@@ -7,6 +7,8 @@ extern "C" {
 #include "libavformat/avformat.h"
 }
 
+#include <inttypes.h>
+
 #include "FFDemux.h"
 #include "XLog.h"
 
@@ -59,7 +61,7 @@ bool FFDemux::Open(const char *url)
     // 这个值可能不一定有
     mTotalMillisecond = ic->duration / (AV_TIME_BASE / 1000);
 
-    XLOGI("total duration: %s ms", mTotalMillisecond );
+    XLOGI("total duration: %dms", mTotalMillisecond );
 
     // 在 open 时调用一下
     getVideoParameter();

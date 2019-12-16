@@ -11,6 +11,8 @@ class XEGL
 public:
     virtual bool init(void *win) = 0;
 
+    virtual void draw() = 0;
+
 public:
     static XEGL *get();
 
